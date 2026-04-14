@@ -1,5 +1,6 @@
 const Pedido = require("../models/pedido.model");
 const Producto = require("../models/producto.model");
+const Usuario = require("../models/usuario.model");
 
 exports.crearPedido = async (req, res) => {
   try {
@@ -42,6 +43,20 @@ exports.crearPedido = async (req, res) => {
 
     res.json(pedido);
   } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
+exports.obtenerPedidos = async (req, res) => {
+  try {
+    const pedidos = await Pedido.find()
+      .populate("usuario", "nombre email")
+      .populate("productos.producto", "nombre precio");
+
+    res.json(pedidos);
+  } catch (error) {
+    console.log(error);
     res.status(500).json(error);
   }
 };
