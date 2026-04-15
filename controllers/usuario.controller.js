@@ -6,11 +6,17 @@ exports.crearUsuario = async (req, res) => {
         await usuario.save();
         res.json(usuario);
     } catch (error) {
+        console.log("ERROR:", error);
         res.status(500).json(error);
     }
 }
 
 exports.obtenerUsuarios = async (req, res) => {
-    const usuarios = await Usuario.find();
-    res.json(usuarios);
+      try {
+        const usuarios = await Usuario.find();
+        res.json(usuarios);
+    } catch (error) {
+        console.log("ERROR:", error);
+        res.status(500).json({ error: error.message });
+    }
 }

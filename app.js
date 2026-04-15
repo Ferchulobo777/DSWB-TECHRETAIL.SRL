@@ -1,17 +1,21 @@
-const express = require("express");
-const cors = require("cors");
+require('dotenv').config();
+console.log('Arrancando app...');
+
+const express = require('express');
+const connectDB = require('./config/db');
 
 const app = express();
-app.use(cors());
+
 app.use(express.json());
 
-const usuarioRoutes = require("./routes/usuario.routes");
-const productoRoutes = require("./routes/producto.routes");
-const pedidoRoutes = require("./routes/pedido.routes");
+const usuarioRoutes = require('./routes/usuario.routes');
+console.log("Cargando rutas de usuarios...");
+app.use('/usuarios', usuarioRoutes);
 
-app.use("/usuarios", usuarioRoutes);
-app.use("/productos", productoRoutes);
-app.use("/pedidos", pedidoRoutes);
-
+// ruta de prueba
+app.get('/', (req, res) => {
+  res.send('API funcionando');
+});
 
 module.exports = app;
+
