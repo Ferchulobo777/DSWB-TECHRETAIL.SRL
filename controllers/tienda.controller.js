@@ -8,3 +8,7 @@ exports.crearTienda = async (req, res) => {
     }
 };
 
+exports.obtenerTienda = (req, res) => {
+  res.json([]);
+};
+
