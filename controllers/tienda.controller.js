@@ -1,14 +1,26 @@
-exports.crearTienda = async (req, res) => {
-    try {
-        const tienda = new Tienda(req.body);
-        await tienda.save();
-        res.json(tienda);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+const Tienda = require("../models/tienda.model");
+const BaseController = require("./BaseController");
+
+class TiendaController extends BaseController {
+    
+    crearTienda = async (req, res) => {
+        try {
+            const tienda = new Tienda(req.body);
+            await tienda.save();
+            this.sendSuccess(res, tienda, 201);
+        } catch (error) {
+            this.sendError(res, error);
+        }
     }
-};
 
-exports.obtenerTienda = (req, res) => {
-  res.json([]);
-};
+    obtenerTienda = async (req, res) => {
+        try {
+            const tiendas = await Tienda.find();
+            this.sendSuccess(res, tiendas);
+        } catch (error) {
+            this.sendError(res, error);
+        }
+    }
+}
 
+module.exports = new TiendaController();
