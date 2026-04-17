@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 const DetalleSchema = mongoose.Schema({
     producto: {type: mongoose.Schema.Types.ObjectId, ref:"Producto"},
     cantidad: Number,
-    precio:   Number
+    precio:   Number,
+    codigo: Number,
+    descripcion: String
 });
 
 
