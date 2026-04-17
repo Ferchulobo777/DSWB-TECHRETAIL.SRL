@@ -1,62 +1,65 @@
 const Pedido = require("../models/pedido.model");
 const Producto = require("../models/producto.model");
 const Usuario = require("../models/usuario.model");
+const BaseController = require("./BaseController");
 
-exports.crearPedido = async (req, res) => {
-  try {
-    const { usuario, productos } = req.body;
+class PedidoController extends BaseController {
 
-    let total = 0;
-    let detalles = [];
+    crearPedido = async (req, res) => {
+        try {
+            const { usuario, productos } = req.body;
 
-    for (let item of productos) {
-      const prod = await Producto.findById(item.producto);
+            let total = 0;
+            let detalles = [];
 
-      if (!prod) {
-        return res.status(404).json({ error: "Producto no encontrado" });
-      }
+            for (let item of productos) {
+                const prod = await Producto.findById(item.producto);
 
-      if (prod.stock < item.cantidad) {
-        return res.status(404).json({ error: "Stock Insuficiente" });
-      }
+                if (!prod) {
+                    return this.sendError(res, new Error("Producto no encontrado"), 404);
+                }
 
-      total += prod.precio * item.cantidad;
+                if (prod.stock < item.cantidad) {
+                    return this.sendError(res, new Error("Stock insuficiente"), 400);
+                }
 
-      detalles.push({
-        producto: prod._id,
-        cantidad: item.cantidad,
-        precio: prod.precio,
-      });
+                total += prod.precio * item.cantidad;
 
-      // descontar stock
-      prod.stock -= item.cantidad;
-      await prod.save();
+                detalles.push({
+                    producto: prod._id,
+                    cantidad: item.cantidad,
+                    precio: prod.precio,
+                });
+
+                // descontar stock
+                prod.stock -= item.cantidad;
+                await prod.save();
+            }
+
+            const pedido = new Pedido({
+                usuario,
+                productos: detalles,
+                total,
+            });
+
+            await pedido.save();
+            this.sendSuccess(res, pedido, 201);
+        } catch (error) {
+            this.sendError(res, error);
+        }
     }
 
-    const pedido = new Pedido({
-      usuario,
-      productos: detalles,
-      total,
-    });
+    obtenerPedidos = async (req, res) => {
+        try {
+            const pedidos = await Pedido.find()
+                .populate("usuario", "nombre email")
+                .populate("productos.producto", "nombre precio");
 
-    await pedido.save();
+            this.sendSuccess(res, pedidos);
+        } catch (error) {
+            this.sendError(res, error);
+        }
+    }
+}
 
-    res.json(pedido);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
-
-
-exports.obtenerPedidos = async (req, res) => {
-  try {
-    const pedidos = await Pedido.find()
-      .populate("usuario", "nombre email")
-      .populate("productos.producto", "nombre precio");
-
-    res.json(pedidos);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json(error);
-  }
-};
+module.exports = new PedidoController();
