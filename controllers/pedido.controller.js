@@ -1,16 +1,28 @@
-const Pedido = require("../models/pedido.model");
-const Producto = require("../models/producto.model");
-const Usuario = require("../models/usuario.model");
+const fs = require("fs");
 
-exports.crearPedido = async (req, res) => {
+const rutaPedidos = "./data/pedidos.json";
+const rutaProductos = "./data/productos.json";
+const rutaUsuarios = "./data/usuarios.json";
+
+const leer = (ruta) => JSON.parse(fs.readFileSync(ruta));
+const guardar = (ruta, data) =>
+  fs.writeFileSync(ruta, JSON.stringify(data, null, 2));
+
+
+exports.crearPedido = (req, res) => {
   try {
-    const { usuario, productos } = req.body;
+    const { usuarioId, productos } = req.body;
+
+    let pedidos = leer(rutaPedidos);
+    let productosDB = leer(rutaProductos);
+    let usuarios = leer(rutaUsuarios);
+
 
     let total = 0;
     let detalles = [];
 
     for (let item of productos) {
-      const prod = await Producto.findById(item.producto);
+      const prod = productosDB.find(p => p.id == item.productoId);
 
       if (!prod) {
         return res.status(404).json({ error: "Producto no encontrado" });
@@ -23,38 +35,62 @@ exports.crearPedido = async (req, res) => {
       total += prod.precio * item.cantidad;
 
       detalles.push({
-        producto: prod._id,
+        producto: prod.id,
         cantidad: item.cantidad,
         precio: prod.precio,
       });
 
       // descontar stock
       prod.stock -= item.cantidad;
-      await prod.save();
     }
+      guardar(rutaProductos, productosDB);
+    
 
-    const pedido = new Pedido({
-      usuario,
+    const nuevoPedido = {
+      id: Date.now(),
+      usuarioId,
       productos: detalles,
       total,
-    });
+    };
 
-    await pedido.save();
+    pedidos.push(nuevoPedido);
+    guardar(rutaPedidos, pedidos);
 
-    res.json(pedido);
+    res.json(nuevoPedido);
   } catch (error) {
     res.status(500).json(error);
   }
 };
 
 
-exports.obtenerPedidos = async (req, res) => {
+exports.obtenerPedidos = (req, res) => {
   try {
-    const pedidos = await Pedido.find()
-      .populate("usuario", "nombre email")
-      .populate("productos.producto", "nombre precio");
 
-    res.json(pedidos);
+    const pedidos = leer(rutaPedidos);
+    const usuarios = leer(rutaUsuarios);
+    const productos = leer(rutaProductos);
+
+    const resultado = pedidos.map(p => {
+      const usuario = usuarios.find(u => u.id == p.usuarioId);
+
+    const productosDetallados = p.productos.map(item => {
+      const prod = productos.find(pr => pr.id == item.productoId);
+
+    return {
+          ...item,
+          producto: prod
+        };
+      });
+
+      return {
+        ...p,
+        usuario,
+        productos: productosDetallados
+      };
+    });
+
+
+    res.json(resultado);
   } catch (error) {
     console.log(error);
     res.status(500).json(error);

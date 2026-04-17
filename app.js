@@ -2,8 +2,6 @@ require('dotenv').config();
 console.log('Arrancando app...');
 
 const express = require('express');
-const connectDB = require('./config/db');
-
 const app = express();
 
 app.use(express.json());
@@ -14,6 +12,7 @@ app.use('/usuarios', usuarioRoutes);
 
 const tiendaRoutes = require('./routes/tienda.routes');
 app.use('/tiendas', tiendaRoutes);
+
 
 // ruta de prueba
 app.get('/', (req, res) => {
