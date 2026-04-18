@@ -1,26 +1,38 @@
-const Tienda = require("../models/tienda.model");
-const BaseController = require("./BaseController");
+const fs = require("fs");
 
-class TiendaController extends BaseController {
-    
-    crearTienda = async (req, res) => {
-        try {
-            const tienda = new Tienda(req.body);
-            await tienda.save();
-            this.sendSuccess(res, tienda, 201);
-        } catch (error) {
-            this.sendError(res, error);
-        }
-    }
+const rutaTiendas = "./data/tiendas.json";
 
-    obtenerTienda = async (req, res) => {
-        try {
-            const tiendas = await Tienda.find();
-            this.sendSuccess(res, tiendas);
-        } catch (error) {
-            this.sendError(res, error);
-        }
-    }
-}
+const leer = (ruta) => JSON.parse(fs.readFileSync(ruta));
+const guardar = (ruta, data) =>
+  fs.writeFileSync(ruta, JSON.stringify(data, null, 2));
 
-module.exports = new TiendaController();
+
+
+exports.crearTienda = (req, res) => {
+  try {
+    const tiendas = leer(rutaTiendas);
+
+    const nuevaTienda = {
+      id: Date.now(),
+      nombre: req.body.nombre,
+      direccion: req.body.direccion
+    };
+
+    tiendas.push(nuevaTienda);
+    guardar(rutaTiendas, tiendas);
+
+    res.status(201).json(nuevaTienda);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
+exports.obtenerTienda = (req, res) => {
+  try {
+    const tiendas = leer(rutaTiendas);
+    res.json(tiendas);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
