@@ -15,7 +15,8 @@ exports.crearUsuario = (req, res) => {
     const nuevoUsuario = {
       id: Date.now(),
       nombre: req.body.nombre,
-      email: req.body.email
+      email: req.body.email,
+      ciudad: req.body.ciudad,
     };
 
     usuarios.push(nuevoUsuario);
