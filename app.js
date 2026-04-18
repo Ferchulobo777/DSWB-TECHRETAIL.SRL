@@ -3,8 +3,16 @@ console.log('Arrancando app...');
 
 const express = require('express');
 const app = express();
+const path = require('path');
 
+// Configuración de Pug
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+// Middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const usuarioRoutes = require('./routes/usuario.routes');
 console.log("Cargando rutas de usuarios...");
@@ -15,8 +23,12 @@ app.use('/tiendas', tiendaRoutes);
 
 
 // ruta de prueba
+const webRoutes = require('./routes/web.routes');
+app.use('/vistas', webRoutes);
+
+// redirigir raíz a vistas por defecto para facilitar visualización
 app.get('/', (req, res) => {
-  res.send('API funcionando');
+  res.redirect('/vistas');
 });
 
 module.exports = app;

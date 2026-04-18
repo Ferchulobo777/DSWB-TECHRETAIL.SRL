@@ -17,9 +17,8 @@ exports.crearPedido = (req, res) => {
     let productosDB = leer(rutaProductos);
     let usuarios = leer(rutaUsuarios);
 
-
-    let total = 0;
     let detalles = [];
+    let total = 0;
 
     for (let item of productos) {
       const prod = productosDB.find(p => p.id == item.productoId);
@@ -29,10 +28,8 @@ exports.crearPedido = (req, res) => {
       }
 
       if (prod.stock < item.cantidad) {
-        return res.status(404).json({ error: "Stock Insuficiente" });
+        return res.status(400).json({ error: "Stock insuficiente" });
       }
-
-      total += prod.precio * item.cantidad;
 
       detalles.push({
         producto: prod.id,
@@ -58,7 +55,7 @@ exports.crearPedido = (req, res) => {
 
     res.json(nuevoPedido);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json(error);  
   }
 };
 
@@ -71,10 +68,10 @@ exports.obtenerPedidos = (req, res) => {
     const productos = leer(rutaProductos);
 
     const resultado = pedidos.map(p => {
-      const usuario = usuarios.find(u => u.id == p.usuarioId);
+    const usuario = usuarios.find(u => u.id == p.usuarioId);
 
     const productosDetallados = p.productos.map(item => {
-      const prod = productos.find(pr => pr.id == item.productoId);
+    const prod = productos.find(pr => pr.id == item.productoId);
 
     return {
           ...item,
@@ -95,4 +92,4 @@ exports.obtenerPedidos = (req, res) => {
     console.log(error);
     res.status(500).json(error);
   }
-};
+  }; 

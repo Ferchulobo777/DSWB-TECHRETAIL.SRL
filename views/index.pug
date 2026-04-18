@@ -1,0 +1,23 @@
+extends layout
+
+block content
+  .card(style="text-align: center; padding: 4rem 2rem;")
+    h1 Bienvenido a TechRetail
+    p.lead(style="color: var(--text-muted); font-size: 1.25rem; margin-bottom: 2rem;") 
+      | Gestión de inventario, usuarios y pedidos con arquitectura POO y Pug.
+    
+    .grid
+      .card
+        h3 Usuarios
+        p Gestiona los clientes y administradores.
+        a.btn.btn-primary(href="/vistas/usuarios") Ver Usuarios
+      
+      .card
+        h3 Productos
+        p Control de inventario y precios.
+        a.btn.btn-primary(href="/vistas/productos") Ver Productos
+      
+      .card
+        h3 Tiendas
+        p Sucursales y puntos de venta.
+        a.btn.btn-primary(href="/vistas/tiendas") Ver Tiendas

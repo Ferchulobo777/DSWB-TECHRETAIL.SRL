@@ -1,47 +1,92 @@
-const Usuario = require("../models/usuario.model");
+const fs = require("fs");
 
-exports.crearUsuario = async (req, res) => {
-    try {
-        const usuario = new Usuario(req.body);
-        await usuario.save();
-        res.json(usuario);
-    } catch (error) {
-        console.log("ERROR:", error);
-        res.status(500).json(error);
-    }
-}
+const rutaUsuarios = "./data/usuarios.json";
 
-exports.obtenerUsuarios = async (req, res) => {
-      try {
-        const usuarios = await Usuario.find();
-        res.json(usuarios);
-    } catch (error) {
-        console.log("ERROR:", error);
-        res.status(500).json({ error: error.message });
-    }
-}
+const leer = (ruta) => JSON.parse(fs.readFileSync(ruta));
+const guardar = (ruta, data) =>
+  fs.writeFileSync(ruta, JSON.stringify(data, null, 2));
 
-exports.actualizarUsuario = async (req, res) => {
-    try {
-        const usuario = await Usuario.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
-        res.json(usuario);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
-    }
+
+
+exports.crearUsuario = (req, res) => {
+  try {
+    const usuarios = leer(rutaUsuarios);
+
+    const nuevoUsuario = {
+      id: Date.now(),
+      nombre: req.body.nombre,
+      email: req.body.email
+    };
+
+    usuarios.push(nuevoUsuario);
+    guardar(rutaUsuarios, usuarios);
+
+    res.status(201).json(nuevoUsuario);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
-exports.eliminarUsuario = async (req, res) => {
-    try {
-        await Usuario.findByIdAndDelete(req.params.id);
-        res.json({ mensaje: "Usuario eliminado" });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error.message });
-    }
+
+exports.obtenerUsuarios = (req, res) => {
+  try {
+    const usuarios = leer(rutaUsuarios);
+    res.json(usuarios);
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
+
+exports.actualizarUsuario = (req, res) => {
+  try {
+    let usuarios = leer(rutaUsuarios);
+
+    const index = usuarios.findIndex(u => u.id == req.params.id);
+
+    if (index === -1) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    usuarios[index] = {
+      ...usuarios[index],
+      ...req.body
+    };
+
+    guardar(rutaUsuarios, usuarios);
+
+    res.json(usuarios[index]);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
+
+exports.eliminarUsuario = (req, res) => {
+  try {
+    let usuarios = leer(rutaUsuarios);
+
+    const nuevosUsuarios = usuarios.filter(u => u.id != req.params.id);
+
+    if (usuarios.length === nuevosUsuarios.length) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    guardar(rutaUsuarios, nuevosUsuarios);
+
+    res.json({ mensaje: "Usuario eliminado" });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
+exports.renderUsuarios = (req, res) => {
+  try {
+    const usuarios = leer(rutaUsuarios);
+    res.render("usuarios", { usuarios });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
