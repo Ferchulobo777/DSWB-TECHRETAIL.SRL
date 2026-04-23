@@ -1,1 +1,16 @@
-[ ]
+[
+  {
+    "id": 1776984952896,
+    "usuarioId": 1776473121772,
+    "productos": [
+      {
+        "productoId": 1776983994681,
+        "cantidad": 1
+      },
+      {
+        "productoId": 1776984034782,
+        "cantidad": 2
+      }
+    ]
+  }
+]

@@ -1,1 +1,46 @@
-[ ]
+[
+  {
+    "id": 1776983994681,
+    "nombre": "Auto a Control Remoto",
+    "precio": 15000,
+    "tiendaId": 8,
+    "stock": null
+  },
+  {
+    "id": 1776984034782,
+    "nombre": "Camión de Bomberos",
+    "precio": 17000,
+    "tiendaId": 5,
+    "stock": null
+  },
+  {
+    "id": 1776984043324,
+    "nombre": "Casa de Muñecas",
+    "precio": 25000,
+    "tiendaId": 3
+  },
+  {
+    "id": 1776984056760,
+    "nombre": "Pista de Autos",
+    "precio": 21000,
+    "tiendaId": 4
+  },
+  {
+    "id": 1776984077603,
+    "nombre": "Peluche Oso Pequeño",
+    "precio": 16000,
+    "tiendaId": 6
+  },
+  {
+    "id": 1776984090680,
+    "nombre": "Juego de Cocina Infantil",
+    "precio": 23000,
+    "tiendaId": 5
+  },
+  {
+    "id": 1776984112532,
+    "nombre": "Kit de Ciencia para Niños",
+    "precio": 59000,
+    "tiendaId": 4
+  }
+]

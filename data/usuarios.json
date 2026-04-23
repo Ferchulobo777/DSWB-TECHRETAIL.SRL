@@ -1,1 +1,27 @@
-[ ]
+[
+  {
+    "id": 1776473121772,
+    "nombre": "Nora Gimenez",
+    "email": "nora@test.com"
+  },
+  {
+    "id": 1776473159299,
+    "nombre": "Franco Gutierrez",
+    "email": "franco@test.com"
+  },
+  {
+    "id": 1776473179581,
+    "nombre": "Lucio Costa",
+    "email": "lucio@test.com"
+  },
+  {
+    "id": 1776473199424,
+    "nombre": "Mariela Saenz",
+    "email": "mariela@test.com"
+  },
+  {
+    "id": 1776473225910,
+    "nombre": "Victor Torres",
+    "email": "victor@test.com"
+  }
+]

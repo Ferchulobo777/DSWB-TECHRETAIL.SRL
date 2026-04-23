@@ -1,1 +1,22 @@
-[ ]
+[
+  {
+    "id": 1776473540172,
+    "nombre": "Minerva deco",
+    "direccion": "Caballito - Av.Rivadavia 4860"
+  },
+  {
+    "id": 1776473591080,
+    "nombre": "Tecno Flores",
+    "direccion": "Flores - Av.Rivadavia 6352"
+  },
+  {
+    "id": 1776473715934,
+    "nombre": "Cebra juguetes",
+    "direccion": "San Telmo - Av. de Mayo 963"
+  },
+  {
+    "id": 1776473745370,
+    "nombre": "Cebra juguetes",
+    "direccion": "Almagro - Av. Rivadavia 4050"
+  }
+]

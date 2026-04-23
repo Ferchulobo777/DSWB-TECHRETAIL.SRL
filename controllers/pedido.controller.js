@@ -1,3 +1,4 @@
+const Pedido = require("../models/pedidos");
 const fs = require("fs");
 
 const rutaPedidos = "./data/pedidos.json";
@@ -19,6 +20,12 @@ exports.crearPedido = (req, res) => {
 
     let detalles = [];
     let total = 0;
+
+    const usuarioExiste = usuarios.find(u => u.id == usuarioId);
+
+    if (!usuarioExiste) {
+    return res.status(404).json({ error: "Usuario no encontrado" });
+    }
 
     for (let item of productos) {
       const prod = productosDB.find(p => p.id == item.productoId);
@@ -43,12 +50,12 @@ exports.crearPedido = (req, res) => {
       guardar(rutaProductos, productosDB);
     
 
-    const nuevoPedido = {
-      id: Date.now(),
-      usuarioId,
-      productos: detalles,
-      total,
-    };
+    const nuevoPedido = new Pedido(
+      Date.now(),
+      req.body.usuarioId,
+      req.body.productos,
+      req.body.total
+    );
 
     pedidos.push(nuevoPedido);
     guardar(rutaPedidos, pedidos);
