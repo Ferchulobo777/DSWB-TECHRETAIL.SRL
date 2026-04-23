@@ -1,65 +1,95 @@
-const Pedido = require("../models/pedido.model");
-const Producto = require("../models/producto.model");
-const Usuario = require("../models/usuario.model");
-const BaseController = require("./BaseController");
+const fs = require("fs");
 
-class PedidoController extends BaseController {
+const rutaPedidos = "./data/pedidos.json";
+const rutaProductos = "./data/productos.json";
+const rutaUsuarios = "./data/usuarios.json";
 
-    crearPedido = async (req, res) => {
-        try {
-            const { usuario, productos } = req.body;
+const leer = (ruta) => JSON.parse(fs.readFileSync(ruta));
+const guardar = (ruta, data) =>
+  fs.writeFileSync(ruta, JSON.stringify(data, null, 2));
 
-            let total = 0;
-            let detalles = [];
 
-            for (let item of productos) {
-                const prod = await Producto.findById(item.producto);
+exports.crearPedido = (req, res) => {
+  try {
+    const { usuarioId, productos } = req.body;
 
-                if (!prod) {
-                    return this.sendError(res, new Error("Producto no encontrado"), 404);
-                }
+    let pedidos = leer(rutaPedidos);
+    let productosDB = leer(rutaProductos);
+    let usuarios = leer(rutaUsuarios);
 
-                if (prod.stock < item.cantidad) {
-                    return this.sendError(res, new Error("Stock insuficiente"), 400);
-                }
+    let detalles = [];
+    let total = 0;
 
-                total += prod.precio * item.cantidad;
+    for (let item of productos) {
+      const prod = productosDB.find(p => p.id == item.productoId);
 
-                detalles.push({
-                    producto: prod._id,
-                    cantidad: item.cantidad,
-                    precio: prod.precio,
-                });
+      if (!prod) {
+        return res.status(404).json({ error: "Producto no encontrado" });
+      }
 
-                // descontar stock
-                prod.stock -= item.cantidad;
-                await prod.save();
-            }
+      if (prod.stock < item.cantidad) {
+        return res.status(400).json({ error: "Stock insuficiente" });
+      }
 
-            const pedido = new Pedido({
-                usuario,
-                productos: detalles,
-                total,
-            });
+      detalles.push({
+        producto: prod.id,
+        cantidad: item.cantidad,
+        precio: prod.precio,
+      });
 
-            await pedido.save();
-            this.sendSuccess(res, pedido, 201);
-        } catch (error) {
-            this.sendError(res, error);
-        }
+      // descontar stock
+      prod.stock -= item.cantidad;
     }
+      guardar(rutaProductos, productosDB);
+    
 
-    obtenerPedidos = async (req, res) => {
-        try {
-            const pedidos = await Pedido.find()
-                .populate("usuario", "nombre email")
-                .populate("productos.producto", "nombre precio");
+    const nuevoPedido = {
+      id: Date.now(),
+      usuarioId,
+      productos: detalles,
+      total,
+    };
 
-            this.sendSuccess(res, pedidos);
-        } catch (error) {
-            this.sendError(res, error);
-        }
-    }
-}
+    pedidos.push(nuevoPedido);
+    guardar(rutaPedidos, pedidos);
 
-module.exports = new PedidoController();
+    res.json(nuevoPedido);
+  } catch (error) {
+    res.status(500).json(error);  
+  }
+};
+
+
+exports.obtenerPedidos = (req, res) => {
+  try {
+
+    const pedidos = leer(rutaPedidos);
+    const usuarios = leer(rutaUsuarios);
+    const productos = leer(rutaProductos);
+
+    const resultado = pedidos.map(p => {
+    const usuario = usuarios.find(u => u.id == p.usuarioId);
+
+    const productosDetallados = p.productos.map(item => {
+    const prod = productos.find(pr => pr.id == item.productoId);
+
+    return {
+          ...item,
+          producto: prod
+        };
+      });
+
+      return {
+        ...p,
+        usuario,
+        productos: productosDetallados
+      };
+    });
+
+
+    res.json(resultado);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+  }; 

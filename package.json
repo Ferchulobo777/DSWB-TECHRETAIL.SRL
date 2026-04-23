@@ -1,7 +1,7 @@
 {
   "name": "techretail",
   "version": "1.0.0",
-  "description": "",
+  "description": "- Vanesa Aracena  \r - Tomas Maldocena\r - Fernando Rodríguez",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon ./server.js",
@@ -14,11 +14,18 @@
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "mongoose": "^9.4.1",
+    "express": "^4.18.2",
     "pug": "^3.0.4"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ferchulobo777/DSWB-TECHRETAIL.SRL.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Ferchulobo777/DSWB-TECHRETAIL.SRL/issues"
+  },
+  "homepage": "https://github.com/Ferchulobo777/DSWB-TECHRETAIL.SRL#readme"
 }

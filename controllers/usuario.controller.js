@@ -1,63 +1,92 @@
-const Usuario = require("../models/usuario.model");
-const BaseController = require("./BaseController");
+const fs = require("fs");
 
-class UsuarioController extends BaseController {
-    
-    crearUsuario = async (req, res) => {
-        try {
-            const usuario = new Usuario(req.body);
-            await usuario.save();
-            this.sendSuccess(res, usuario, 201);
-        } catch (error) {
-            this.sendError(res, error);
-        }
+const rutaUsuarios = "./data/usuarios.json";
+
+const leer = (ruta) => JSON.parse(fs.readFileSync(ruta));
+const guardar = (ruta, data) =>
+  fs.writeFileSync(ruta, JSON.stringify(data, null, 2));
+
+
+
+exports.crearUsuario = (req, res) => {
+  try {
+    const usuarios = leer(rutaUsuarios);
+
+    const nuevoUsuario = {
+      id: Date.now(),
+      nombre: req.body.nombre,
+      email: req.body.email
+    };
+
+    usuarios.push(nuevoUsuario);
+    guardar(rutaUsuarios, usuarios);
+
+    res.status(201).json(nuevoUsuario);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
+exports.obtenerUsuarios = (req, res) => {
+  try {
+    const usuarios = leer(rutaUsuarios);
+    res.json(usuarios);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
+exports.actualizarUsuario = (req, res) => {
+  try {
+    let usuarios = leer(rutaUsuarios);
+
+    const index = usuarios.findIndex(u => u.id == req.params.id);
+
+    if (index === -1) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    obtenerUsuarios = async (req, res) => {
-        try {
-            const usuarios = await Usuario.find();
-            this.sendSuccess(res, usuarios);
-        } catch (error) {
-            this.sendError(res, error);
-        }
+    usuarios[index] = {
+      ...usuarios[index],
+      ...req.body
+    };
+
+    guardar(rutaUsuarios, usuarios);
+
+    res.json(usuarios[index]);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
+
+
+exports.eliminarUsuario = (req, res) => {
+  try {
+    let usuarios = leer(rutaUsuarios);
+
+    const nuevosUsuarios = usuarios.filter(u => u.id != req.params.id);
+
+    if (usuarios.length === nuevosUsuarios.length) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    actualizarUsuario = async (req, res) => {
-        try {
-            const usuario = await Usuario.findByIdAndUpdate(
-                req.params.id,
-                req.body,
-                { new: true }
-            );
-            if (!usuario) {
-                return this.sendError(res, new Error("Usuario no encontrado"), 404);
-            }
-            this.sendSuccess(res, usuario);
-        } catch (error) {
-            this.sendError(res, error);
-        }
-    }
+    guardar(rutaUsuarios, nuevosUsuarios);
 
-    eliminarUsuario = async (req, res) => {
-        try {
-            const usuario = await Usuario.findByIdAndDelete(req.params.id);
-            if (!usuario) {
-                return this.sendError(res, new Error("Usuario no encontrado"), 404);
-            }
-            this.sendSuccess(res, { mensaje: "Usuario eliminado" });
-        } catch (error) {
-            this.sendError(res, error);
-        }
-    }
+    res.json({ mensaje: "Usuario eliminado" });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
 
-    renderUsuarios = async (req, res) => {
-        try {
-            const usuarios = await Usuario.find();
-            this.renderView(res, 'usuarios', { usuarios });
-        } catch (error) {
-            this.sendError(res, error);
-        }
-    }
-}
 
-module.exports = new UsuarioController();
+exports.renderUsuarios = (req, res) => {
+  try {
+    const usuarios = leer(rutaUsuarios);
+    res.render("usuarios", { usuarios });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
