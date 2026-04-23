@@ -1,3 +1,4 @@
+const Tienda = require("../models/tiendas");
 const fs = require("fs");
 
 const rutaTiendas = "./data/tiendas.json";
@@ -12,11 +13,11 @@ exports.crearTienda = (req, res) => {
   try {
     const tiendas = leer(rutaTiendas);
 
-    const nuevaTienda = {
-      id: Date.now(),
-      nombre: req.body.nombre,
-      direccion: req.body.direccion
-    };
+    const nuevaTienda = new Tienda(
+      Date.now(),
+      req.body.nombre,
+      req.body.direccion
+    );
 
     tiendas.push(nuevaTienda);
     guardar(rutaTiendas, tiendas);
@@ -35,4 +36,14 @@ exports.obtenerTienda = (req, res) => {
   } catch (error) {
     res.status(500).json(error);
   }
+};
+
+  exports.renderTiendas = (req, res) => {
+  try {
+    const tiendas = leer(rutaTiendas);
+    res.render("tiendas", { tiendas });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+
 };

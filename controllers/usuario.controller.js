@@ -1,3 +1,4 @@
+const Usuario = require("../models/usuarios");
 const fs = require("fs");
 
 const rutaUsuarios = "./data/usuarios.json";
@@ -12,12 +13,12 @@ exports.crearUsuario = (req, res) => {
   try {
     const usuarios = leer(rutaUsuarios);
 
-    const nuevoUsuario = {
-      id: Date.now(),
-      nombre: req.body.nombre,
-      email: req.body.email,
-      ciudad: req.body.ciudad,
-    };
+    const nuevoUsuario = new Usuario(
+      Date.now(),
+      req.body.nombre,
+      req.body.email,
+      req.body.ciudad,
+    );
 
     usuarios.push(nuevoUsuario);
     guardar(rutaUsuarios, usuarios);

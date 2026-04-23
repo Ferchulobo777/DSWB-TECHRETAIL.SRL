@@ -1,3 +1,4 @@
+const Producto = require("../models/productos");
 const fs = require("fs");
 
 const rutaProductos = "./data/productos.json";
@@ -11,12 +12,12 @@ exports.crearProducto = (req, res) => {
   try {
     const productos = leer(rutaProductos);
 
-    const nuevoProducto = {
-      id: Date.now(),
-      nombre: req.body.nombre,
-      precio: req.body.precio,
-      stock: req.body.stock
-    };
+    const nuevoProducto = new Producto(
+      Date.now(),
+      req.body.nombre,
+      req.body.precio,
+      req.body.stock
+    );
 
     productos.push(nuevoProducto);
     guardar(rutaProductos, productos);

@@ -3,6 +3,7 @@ const router = express.Router();
 
 const productoCtrl = require('../controllers/producto.controller');
 const usuarioCtrl = require('../controllers/usuario.controller');
+const tiendaCtrl = require("../controllers/tienda.controller");
 
 // Dashboard / Home
 router.get('/', (req, res) => {
@@ -12,10 +13,8 @@ router.get('/', (req, res) => {
 // Vistas de Datos
 router.get('/productos', productoCtrl.renderProductos);
 router.get('/usuarios', usuarioCtrl.renderUsuarios);
+router.get('/tiendas', tiendaCtrl.renderTiendas);
 
-// Agregaremos tiendas después si es necesario
-router.get('/tiendas', (req, res) => {
-    res.render('index'); // Placeholder
-});
+
 
 module.exports = router;

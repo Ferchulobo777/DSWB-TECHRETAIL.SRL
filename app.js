@@ -21,6 +21,12 @@ app.use('/usuarios', usuarioRoutes);
 const tiendaRoutes = require('./routes/tienda.routes');
 app.use('/tiendas', tiendaRoutes);
 
+const productoRoutes = require('./routes/producto.routes'); 
+app.use('/productos', productoRoutes);
+
+const pedidoRoutes = require('./routes/pedido.routes');
+app.use('/pedidos', pedidoRoutes);
+
 
 // ruta de prueba
 const webRoutes = require('./routes/web.routes');
