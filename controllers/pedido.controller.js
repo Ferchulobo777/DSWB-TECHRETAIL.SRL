@@ -1,34 +1,24 @@
-const Pedido = require("../models/pedidos");
-const fs = require("fs");
-
-const rutaPedidos = "./data/pedidos.json";
-const rutaProductos = "./data/productos.json";
-const rutaUsuarios = "./data/usuarios.json";
-
-const leer = (ruta) => JSON.parse(fs.readFileSync(ruta));
-const guardar = (ruta, data) =>
-  fs.writeFileSync(ruta, JSON.stringify(data, null, 2));
+const Pedido = require("../models/Pedido");
+const Producto = require("../models/Producto");
+const Usuario = require("../models/Usuario");
 
 
-exports.crearPedido = (req, res) => {
+exports.crearPedido = async (req, res) => {
   try {
     const { usuarioId, productos } = req.body;
 
-    let pedidos = leer(rutaPedidos);
-    let productosDB = leer(rutaProductos);
-    let usuarios = leer(rutaUsuarios);
 
     let detalles = [];
     let total = 0;
 
-    const usuarioExiste = usuarios.find(u => u.id == usuarioId);
+    const usuarioExiste = await Usuario.findById(usuarioId);
 
     if (!usuarioExiste) {
     return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
-    for (let item of productos) {
-      const prod = productosDB.find(p => p.id == item.productoId);
+    for (const item of productos) {
+      const prod = await Producto.findById(item.productoId);
 
       if (!prod) {
         return res.status(404).json({ error: "Producto no encontrado" });
@@ -38,65 +28,55 @@ exports.crearPedido = (req, res) => {
         return res.status(400).json({ error: "Stock insuficiente" });
       }
 
-      detalles.push({
-        producto: prod.id,
-        cantidad: item.cantidad,
-        precio: prod.precio,
-      });
-
-      // descontar stock
+       // descontar stock
       prod.stock -= item.cantidad;
+      
+      await prod.save();
+
+      detalles.push({
+        productoId: prod._id,
+        cantidad: item.cantidad,
+      });
+        
+      total += prod.precio * item.cantidad;
     }
-      guardar(rutaProductos, productosDB);
+
+     
     
 
-    const nuevoPedido = new Pedido(
-      Date.now(),
-      req.body.usuarioId,
-      req.body.productos,
-      req.body.total
-    );
-
-    pedidos.push(nuevoPedido);
-    guardar(rutaPedidos, pedidos);
-
-    res.json(nuevoPedido);
-  } catch (error) {
-    res.status(500).json(error);  
-  }
-};
-
-
-exports.obtenerPedidos = (req, res) => {
-  try {
-
-    const pedidos = leer(rutaPedidos);
-    const usuarios = leer(rutaUsuarios);
-    const productos = leer(rutaProductos);
-
-    const resultado = pedidos.map(p => {
-    const usuario = usuarios.find(u => u.id == p.usuarioId);
-
-    const productosDetallados = p.productos.map(item => {
-    const prod = productos.find(pr => pr.id == item.productoId);
-
-    return {
-          ...item,
-          producto: prod
-        };
+    const nuevoPedido = new Pedido( {
+      usuarioId,
+      productos: detalles,
+      total
       });
 
-      return {
-        ...p,
-        usuario,
-        productos: productosDetallados
-      };
+    await nuevoPedido.save();
+  
+    res.status(201).json(nuevoPedido);
+    } catch (error) {
+      console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
     });
+   }
+  };
 
 
-    res.json(resultado);
-  } catch (error) {
+
+exports.obtenerPedidos = async  (req, res) => {
+  try {
+
+    const pedidos = await Pedido.find()
+    .populate("usuarioId")
+    .populate("productos.productoId");
+
+     res.json(pedidos);
+
+    } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
-  }; 
+};
+  

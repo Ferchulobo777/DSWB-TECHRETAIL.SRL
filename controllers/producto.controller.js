@@ -1,50 +1,52 @@
-const Producto = require("../models/productos");
-const fs = require("fs");
-
-const rutaProductos = "./data/productos.json";
-
-const leer = (ruta) => JSON.parse(fs.readFileSync(ruta));
-const guardar = (ruta, data) =>
-  fs.writeFileSync(ruta, JSON.stringify(data, null, 2));
+const Producto = require("../models/Producto");
 
 
-exports.crearProducto = (req, res) => {
+
+
+
+exports.crearProducto =  async (req, res) => {
   try {
-    const productos = leer(rutaProductos);
-
-    const nuevoProducto = new Producto(
-      Date.now(),
-      req.body.nombre,
-      req.body.precio,
-      req.body.stock
-    );
-
-    productos.push(nuevoProducto);
-    guardar(rutaProductos, productos);
+    
+    const nuevoProducto = new Producto({
+    nombre: req.body.nombre,
+    precio: req.body.precio,
+    stock: req.body.stock
+    });
+    await nuevoProducto.save();
+  
 
     res.status(201).json(nuevoProducto);
   } catch (error) {
-    res.status(500).json(error);
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };
 
 
 
-exports.obtenerProductos = (req, res) => {
+exports.obtenerProductos = async (req, res) => {
   try {
-    const productos = leer(rutaProductos);
+    const productos = await Producto.find();
     res.json(productos);
   } catch (error) {
-    res.status(500).json(error);
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };
 
 
-exports.renderProductos = (req, res) => {
+exports.renderProductos = async  (req, res) => {
   try {
-    const productos = leer(rutaProductos);
+    const productos = await Producto.find();
     res.render("productos", { productos });
   } catch (error) {
-    res.status(500).json(error);
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };

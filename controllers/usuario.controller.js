@@ -1,94 +1,96 @@
-const Usuario = require("../models/usuarios");
-const fs = require("fs");
-
-const rutaUsuarios = "./data/usuarios.json";
-
-const leer = (ruta) => JSON.parse(fs.readFileSync(ruta));
-const guardar = (ruta, data) =>
-  fs.writeFileSync(ruta, JSON.stringify(data, null, 2));
+const Usuario = require("../models/Usuario");
 
 
 
-exports.crearUsuario = (req, res) => {
+
+exports.crearUsuario = async (req, res) => {
   try {
-    const usuarios = leer(rutaUsuarios);
 
-    const nuevoUsuario = new Usuario(
-      Date.now(),
-      req.body.nombre,
-      req.body.email,
-      req.body.ciudad,
-    );
+    const nuevoUsuario = new Usuario({
+      nombre: req.body.nombre,
+      email: req.body.email,
+      ciudad: req.body.ciudad
+  });
 
-    usuarios.push(nuevoUsuario);
-    guardar(rutaUsuarios, usuarios);
+   await nuevoUsuario.save();
 
     res.status(201).json(nuevoUsuario);
   } catch (error) {
-    res.status(500).json(error);
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };
 
 
-exports.obtenerUsuarios = (req, res) => {
+exports.obtenerUsuarios = async (req, res) => {
   try {
-    const usuarios = leer(rutaUsuarios);
+    const usuarios = await Usuario.find();
     res.json(usuarios);
   } catch (error) {
-    res.status(500).json(error);
+     console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };
 
 
-exports.actualizarUsuario = (req, res) => {
+exports.actualizarUsuario = async (req, res) => {
   try {
-    let usuarios = leer(rutaUsuarios);
+     const usuarioActualizado = await Usuario.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
 
-    const index = usuarios.findIndex(u => u.id == req.params.id);
-
-    if (index === -1) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+    if (!usuarioActualizado) {
+      return res.status(404).json({
+        error: "Usuario no encontrado"
+      });
     }
 
-    usuarios[index] = {
-      ...usuarios[index],
-      ...req.body
-    };
 
-    guardar(rutaUsuarios, usuarios);
-
-    res.json(usuarios[index]);
-  } catch (error) {
-    res.status(500).json(error);
+     res.json(usuarioActualizado);
+     } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };
 
 
 
-exports.eliminarUsuario = (req, res) => {
+exports.eliminarUsuario = async (req, res) => {
   try {
-    let usuarios = leer(rutaUsuarios);
+    const usuarioEliminado = await Usuario.findByIdAndDelete(req.params.id);
 
-    const nuevosUsuarios = usuarios.filter(u => u.id != req.params.id);
-
-    if (usuarios.length === nuevosUsuarios.length) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+    if (!usuarioEliminado) {
+      return res.status(404).json({
+        error: "Usuario no encontrado"
+      });
     }
-
-    guardar(rutaUsuarios, nuevosUsuarios);
 
     res.json({ mensaje: "Usuario eliminado" });
   } catch (error) {
-    res.status(500).json(error);
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };
 
 
-exports.renderUsuarios = (req, res) => {
+exports.renderUsuarios = async (req, res) => {
   try {
-    const usuarios = leer(rutaUsuarios);
+    const usuarios = await Usuario.find();
     res.render("usuarios", { usuarios });
   } catch (error) {
-    res.status(500).json(error);
+     console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };

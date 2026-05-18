@@ -1,49 +1,48 @@
-const Tienda = require("../models/tiendas");
-const fs = require("fs");
-
-const rutaTiendas = "./data/tiendas.json";
-
-const leer = (ruta) => JSON.parse(fs.readFileSync(ruta));
-const guardar = (ruta, data) =>
-  fs.writeFileSync(ruta, JSON.stringify(data, null, 2));
+const Tienda = require("../models/Tienda");
 
 
 
-exports.crearTienda = (req, res) => {
+exports.crearTienda = async (req, res) => {
   try {
     const tiendas = leer(rutaTiendas);
 
-    const nuevaTienda = new Tienda(
-      Date.now(),
-      req.body.nombre,
-      req.body.direccion
-    );
+    const nuevaTienda = new Tienda({
+      nombre: req.body.nombre,
+      direccion: req.body.direccion
+    });
 
-    tiendas.push(nuevaTienda);
-    guardar(rutaTiendas, tiendas);
+    await nuevaTienda.save();
 
     res.status(201).json(nuevaTienda);
   } catch (error) {
-    res.status(500).json(error);
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };
 
 
-exports.obtenerTienda = (req, res) => {
+exports.obtenerTienda = async (req, res) => {
   try {
-    const tiendas = leer(rutaTiendas);
+    const tiendas = await Tienda.find();
     res.json(tiendas);
   } catch (error) {
-    res.status(500).json(error);
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };
 
-  exports.renderTiendas = (req, res) => {
+  exports.renderTiendas = async (req, res) => {
   try {
-    const tiendas = leer(rutaTiendas);
+    const tiendas = await Tienda.find();
     res.render("tiendas", { tiendas });
   } catch (error) {
-    res.status(500).json(error);
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
-
 };
