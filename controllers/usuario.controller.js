@@ -8,8 +8,7 @@ exports.crearUsuario = async (req, res) => {
 
     const nuevoUsuario = new Usuario({
       nombre: req.body.nombre,
-      email: req.body.email,
-      ciudad: req.body.ciudad
+      email: req.body.email
   });
 
    await nuevoUsuario.save();
