@@ -14,6 +14,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const errorHandler = require('./middlewares/error.middleware');
+app.use(errorHandler);
 const usuarioRoutes = require('./routes/usuario.routes');
 console.log("Cargando rutas de usuarios...");
 app.use('/usuarios', usuarioRoutes);

@@ -1,20 +1,25 @@
 const mongoose = require("mongoose");
 
 const productoSchema = new mongoose.Schema({
-    nombre: {
-        type: String,
-        required: true
-    },
+  nombre: {
+    type: String,
+    required: true,
+  },
 
-    precio: {
-        type: Number,
-        required: true
-    },
+  precio: {
+    type: Number,
+    required: true,
+  },
+  stock: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
 
-    tiendaId: {
-   type: mongoose.Schema.Types.ObjectId,
-   ref: "Tienda"
-}
+  tiendaId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Tienda",
+  },
 });
 
 module.exports = mongoose.model("Producto", productoSchema);

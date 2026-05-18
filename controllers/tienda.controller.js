@@ -4,8 +4,6 @@ const Tienda = require("../models/Tienda");
 
 exports.crearTienda = async (req, res) => {
   try {
-    const tiendas = leer(rutaTiendas);
-
     const nuevaTienda = new Tienda({
       nombre: req.body.nombre,
       direccion: req.body.direccion
