@@ -11,7 +11,7 @@ const productoSchema = new mongoose.Schema({
         required: true
     },
 
-    tiendaId: {
+    Number: {
    type: mongoose.Schema.Types.ObjectId,
    ref: "Tienda"
 }
