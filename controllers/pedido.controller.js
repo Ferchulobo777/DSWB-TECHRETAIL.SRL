@@ -51,10 +51,7 @@ exports.crearPedido = async (req, res, next, next) => {
     await nuevoPedido.save();
     res.status(201).json(nuevoPedido);
     } catch (error) {
-      console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+      next(error)
    }
   };
 
@@ -69,10 +66,29 @@ exports.obtenerPedidos = async  (req, res, next) => {
      res.json(pedidos);
 
     } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+      next(error)
   }
 };
   
+exports.obtenerPedidoPorId = async (req, res, next) => {
+
+    try {
+
+        const pedido = await Pedido.findById(req.params.id)
+        .populate("usuarioId")
+        .populate("productos.productoId");
+
+        if (!pedido) {
+            return res.status(404).json({
+                error: "Pedido no encontrado"
+    });
+  }
+
+        res.json(pedido);
+
+    } catch (error) {
+
+        next(error);
+  
+    }
+};

@@ -1,10 +1,7 @@
 const Tienda = require("../models/Tienda");
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> origin/joaquin-branch
 exports.crearTienda = async (req, res, next) => {
   try {
     const nuevaTienda = new Tienda({
@@ -19,18 +16,13 @@ exports.crearTienda = async (req, res, next) => {
   }
 };
 
-<<<<<<< HEAD
-exports.obtenerTiendas = async (req, res, next) => {
-=======
 
 exports.obtenerTienda = async (req, res, next) => {
->>>>>>> origin/joaquin-branch
   try {
     const tiendas = await Tienda.find();
     res.json(tiendas);
   } catch (error) {
     next(error);
-<<<<<<< HEAD
   }
 };
 exports.obtenerTiendaPorId = async (req, res, next) => {
@@ -46,8 +38,6 @@ exports.obtenerTiendaPorId = async (req, res, next) => {
     res.json(tienda);
   } catch (error) {
     next(error);
-=======
->>>>>>> origin/joaquin-branch
   }
 };
 

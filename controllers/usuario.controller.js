@@ -26,7 +26,21 @@ exports.obtenerUsuarios = async (req, res, next) => {
     next(error);
   }
 };
+exports.obtenerUsuarioPorId = async (req, res, next) => {
+  try {
+    const usuario = await Usuario.findById(req.params.id);
 
+    if (!usuario) {
+      return res.status(404).json({
+        error: "Usuario no encontrado",
+      });
+    }
+
+    res.json(usuario);
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.actualizarUsuario = async (req, res, next) => {
   try {

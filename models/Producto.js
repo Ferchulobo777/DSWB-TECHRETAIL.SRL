@@ -16,17 +16,10 @@ const productoSchema = new mongoose.Schema({
     default: 0,
   },
 
-<<<<<<< HEAD
-  tiendaId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Tienda",
-  },
-=======
-    Number: {
+  Number: {
    type: mongoose.Schema.Types.ObjectId,
    ref: "Tienda"
 }
->>>>>>> origin/joaquin-branch
 });
 
 module.exports = mongoose.model("Producto", productoSchema);
