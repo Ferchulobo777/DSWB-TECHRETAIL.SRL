@@ -3,43 +3,35 @@ const Usuario = require("../models/Usuario");
 
 
 
-exports.crearUsuario = async (req, res) => {
+exports.crearUsuario = async (req, res, next) => {
   try {
-
     const nuevoUsuario = new Usuario({
       nombre: req.body.nombre,
       email: req.body.email,
       ciudad: req.body.ciudad
-  });
+    });
 
-   await nuevoUsuario.save();
-
+    await nuevoUsuario.save();
     res.status(201).json(nuevoUsuario);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+    next(error);
   }
 };
 
 
-exports.obtenerUsuarios = async (req, res) => {
+exports.obtenerUsuarios = async (req, res, next) => {
   try {
     const usuarios = await Usuario.find();
     res.json(usuarios);
   } catch (error) {
-     console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+    next(error);
   }
 };
 
 
-exports.actualizarUsuario = async (req, res) => {
+exports.actualizarUsuario = async (req, res, next) => {
   try {
-     const usuarioActualizado = await Usuario.findByIdAndUpdate(
+    const usuarioActualizado = await Usuario.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
@@ -51,19 +43,14 @@ exports.actualizarUsuario = async (req, res) => {
       });
     }
 
-
-     res.json(usuarioActualizado);
-     } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+    res.json(usuarioActualizado);
+  } catch (error) {
+    next(error);
   }
 };
 
 
-
-exports.eliminarUsuario = async (req, res) => {
+exports.eliminarUsuario = async (req, res, next) => {
   try {
     const usuarioEliminado = await Usuario.findByIdAndDelete(req.params.id);
 
@@ -75,22 +62,16 @@ exports.eliminarUsuario = async (req, res) => {
 
     res.json({ mensaje: "Usuario eliminado" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+    next(error);
   }
 };
 
 
-exports.renderUsuarios = async (req, res) => {
+exports.renderUsuarios = async (req, res, next) => {
   try {
     const usuarios = await Usuario.find();
     res.render("usuarios", { usuarios });
   } catch (error) {
-     console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+    next(error);
   }
 };
