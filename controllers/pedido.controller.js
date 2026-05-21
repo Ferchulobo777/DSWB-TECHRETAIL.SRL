@@ -3,7 +3,7 @@ const Producto = require("../models/Producto");
 const Usuario = require("../models/Usuario");
 
 
-exports.crearPedido = async (req, res) => {
+exports.crearPedido = async (req, res, next) => {
   try {
     const { usuarioId, productos } = req.body;
 
@@ -54,16 +54,14 @@ exports.crearPedido = async (req, res) => {
   
     res.status(201).json(nuevoPedido);
     } catch (error) {
-      console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
-   }
+    next(error);
+
+  }
   };
 
 
 
-exports.obtenerPedidos = async  (req, res) => {
+exports.obtenerPedidos = async  (req, res, next) => {
   try {
 
     const pedidos = await Pedido.find()
@@ -72,11 +70,10 @@ exports.obtenerPedidos = async  (req, res) => {
 
      res.json(pedidos);
 
-    } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+   } catch (error) {
+    next(error);
+
   }
+  
 };
   

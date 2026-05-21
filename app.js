@@ -37,5 +37,7 @@ app.get('/', (req, res) => {
   res.redirect('/vistas');
 });
 
+
+
 module.exports = app;
 
