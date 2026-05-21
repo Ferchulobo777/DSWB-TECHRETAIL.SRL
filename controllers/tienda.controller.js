@@ -2,7 +2,7 @@ const Tienda = require("../models/Tienda");
 
 
 
-exports.crearTienda = async (req, res) => {
+exports.crearTienda = async (req, res, next) => {
   try {
     const tiendas = leer(rutaTiendas);
 
@@ -12,37 +12,27 @@ exports.crearTienda = async (req, res) => {
     });
 
     await nuevaTienda.save();
-
     res.status(201).json(nuevaTienda);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+    next(error);
   }
 };
 
 
-exports.obtenerTienda = async (req, res) => {
+exports.obtenerTienda = async (req, res, next) => {
   try {
     const tiendas = await Tienda.find();
     res.json(tiendas);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+    next(error);
   }
 };
 
-  exports.renderTiendas = async (req, res) => {
+exports.renderTiendas = async (req, res, next) => {
   try {
     const tiendas = await Tienda.find();
     res.render("tiendas", { tiendas });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      error: "Error del servidor"
-    });
+    next(error);
   }
 };
