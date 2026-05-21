@@ -47,21 +47,24 @@ exports.crearPedido = async (req, res, next) => {
 
     await nuevoPedido.save();
     res.status(201).json(nuevoPedido);
-  } catch (error) {
+    } catch (error) {
     next(error);
+
   }
-};
+  };
 
 
-exports.obtenerPedidos = async (req, res, next) => {
+
+exports.obtenerPedidos = async  (req, res, next) => {
   try {
     const pedidos = await Pedido.find()
       .populate("usuarioId")
       .populate("productos.productoId");
 
-    res.json(pedidos);
-  } catch (error) {
+   } catch (error) {
     next(error);
+
   }
+  
 };
   

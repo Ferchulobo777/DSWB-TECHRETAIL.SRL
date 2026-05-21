@@ -37,18 +37,7 @@ app.get('/', (req, res) => {
   res.redirect('/vistas');
 });
 
-//midddleware global para atrapar todoslos errores del backend (manejo de errores)
-app.use((err, req, res, next) => 
-  {
 
-  console.error(err);
-  res.status(500).json({
-
-    error: "error interno del servidor"
-
-  });
-}
-);
 
 module.exports = app;
 
