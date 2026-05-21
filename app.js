@@ -37,7 +37,13 @@ app.use('/vistas', webRoutes);
 app.get('/', (req, res) => {
   res.redirect('/vistas');
 });
+<<<<<<< HEAD
 const errorHandler = require('./middlewares/error.middleware');
 app.use(errorHandler);
+=======
+
+
+
+>>>>>>> origin/joaquin-branch
 module.exports = app;
 

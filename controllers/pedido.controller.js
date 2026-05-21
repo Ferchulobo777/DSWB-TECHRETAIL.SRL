@@ -3,10 +3,9 @@ const Producto = require("../models/Producto");
 const Usuario = require("../models/Usuario");
 
 
-exports.crearPedido = async (req, res, next) => {
+exports.crearPedido = async (req, res, next, next) => {
   try {
     const { usuarioId, productos } = req.body;
-
 
     let detalles = [];
     let total = 0;
@@ -14,7 +13,7 @@ exports.crearPedido = async (req, res, next) => {
     const usuarioExiste = await Usuario.findById(usuarioId);
 
     if (!usuarioExiste) {
-    return res.status(404).json({ error: "Usuario no encontrado" });
+      return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
     for (const item of productos) {
@@ -28,30 +27,34 @@ exports.crearPedido = async (req, res, next) => {
         return res.status(400).json({ error: "Stock insuficiente" });
       }
 
-       // descontar stock
+      // descontar stock
       prod.stock -= item.cantidad;
-      
       await prod.save();
 
       detalles.push({
         productoId: prod._id,
         cantidad: item.cantidad,
       });
-        
+
       total += prod.precio * item.cantidad;
     }
+
+     
+    
 
     const nuevoPedido = new Pedido( {
       usuarioId,
       productos: detalles,
       total
-      });
+    });
 
     await nuevoPedido.save();
-  
     res.status(201).json(nuevoPedido);
     } catch (error) {
-      next(error)
+      console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
    }
   };
 
@@ -59,37 +62,17 @@ exports.crearPedido = async (req, res, next) => {
 
 exports.obtenerPedidos = async  (req, res, next) => {
   try {
-
     const pedidos = await Pedido.find()
-    .populate("usuarioId")
-    .populate("productos.productoId");
+      .populate("usuarioId")
+      .populate("productos.productoId");
 
      res.json(pedidos);
 
     } catch (error) {
-      next(error)
+    console.log(error);
+    res.status(500).json({
+      error: "Error del servidor"
+    });
   }
 };
   
-exports.obtenerPedidoPorId = async (req, res, next) => {
-
-    try {
-
-        const pedido = await Pedido.findById(req.params.id)
-        .populate("usuarioId")
-        .populate("productos.productoId");
-
-        if (!pedido) {
-            return res.status(404).json({
-                error: "Pedido no encontrado"
-            });
-        }
-
-        res.json(pedido);
-
-    } catch (error) {
-
-        next(error);
-
-    }
-};

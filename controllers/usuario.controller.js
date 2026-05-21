@@ -1,14 +1,17 @@
 const Usuario = require("../models/Usuario");
 
+
+
+
 exports.crearUsuario = async (req, res, next) => {
   try {
     const nuevoUsuario = new Usuario({
       nombre: req.body.nombre,
       email: req.body.email,
+      ciudad: req.body.ciudad
     });
 
     await nuevoUsuario.save();
-
     res.status(201).json(nuevoUsuario);
   } catch (error) {
     next(error);
@@ -23,21 +26,7 @@ exports.obtenerUsuarios = async (req, res, next) => {
     next(error);
   }
 };
-exports.obtenerUsuarioPorId = async (req, res, next) => {
-  try {
-    const usuario = await Usuario.findById(req.params.id);
 
-    if (!usuario) {
-      return res.status(404).json({
-        error: "Usuario no encontrado",
-      });
-    }
-
-    res.json(usuario);
-  } catch (error) {
-    next(error);
-  }
-};
 
 exports.actualizarUsuario = async (req, res, next) => {
   try {
