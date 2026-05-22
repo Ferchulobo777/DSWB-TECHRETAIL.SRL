@@ -20,6 +20,7 @@ router.get('/productos', productoCtrl.renderProductos);
 router.get('/usuarios/nuevo', (req, res) => {
     res.render('nuevo-usuario');
 });
+router.get('/usuarios/editar/:id', usuarioCtrl.renderEditarUsuario);
 router.get('/usuarios', usuarioCtrl.renderUsuarios);
 router.get('/tiendas', tiendaCtrl.renderTiendas);
 

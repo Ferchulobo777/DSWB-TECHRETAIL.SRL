@@ -21,7 +21,29 @@ block content
             td= usuario.ciudad || "No especificada"
             td
               a(href=`/vistas/usuarios/editar/${usuario._id}` style="color: var(--primary); text-decoration: none; margin-right: 1rem;") Editar
-              a(href=`/vistas/usuarios/eliminar/${usuario._id}` style="color: #ef4444; text-decoration: none;") Eliminar
+              button.btn-delete(data-id=`${usuario._id}` style="background: none; border: none; color: #ef4444; cursor: pointer; font-family: inherit; font-size: inherit; padding: 0; text-decoration: none;") Eliminar
         else
           tr
             td(colspan="4" style="text-align: center; padding: 2rem;") No hay usuarios registrados.
+
+  script.
+    document.querySelectorAll('.btn-delete').forEach(function(btn) {
+      btn.addEventListener('click', async function() {
+        const id = this.getAttribute('data-id');
+        if (!confirm('¿Estás seguro de eliminar este usuario?')) return;
+
+        try {
+          const response = await fetch('/usuarios/' + id, { method: 'DELETE' });
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || 'Error al eliminar el usuario.');
+          }
+
+          showToast('Usuario eliminado correctamente', 'success');
+          this.closest('tr').remove();
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+    });

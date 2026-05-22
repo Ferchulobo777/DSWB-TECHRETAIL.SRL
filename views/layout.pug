@@ -37,6 +37,8 @@ html(lang="es")
       .container(style="text-align: center; color: var(--text-muted); margin-top: 4rem;")
         p &copy; 2024 TechRetail Srl - Panel de Administración
 
+    #toast-container
+
     script.
       document.addEventListener('DOMContentLoaded', function() {
         const sessionContainer = document.getElementById('nav-session-container');
@@ -100,4 +102,21 @@ html(lang="es")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
         }
+
+        window.showToast = function(message, type) {
+          const container = document.getElementById('toast-container');
+          if (!container) return;
+
+          const toast = document.createElement('div');
+          toast.className = 'toast toast-' + (type || 'success');
+          toast.textContent = message;
+          container.appendChild(toast);
+
+          setTimeout(function() {
+            toast.classList.add('toast-hiding');
+            setTimeout(function() {
+              if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 300);
+          }, 3000);
+        };
       });

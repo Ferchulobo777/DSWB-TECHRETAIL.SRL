@@ -105,8 +105,10 @@ block content
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.usuario));
         
-        // Redirigir al home de vistas
-        window.location.href = '/vistas';
+        showToast('Inicio de sesión exitoso', 'success');
+        setTimeout(function() {
+          window.location.href = '/vistas';
+        }, 1000);
         
       } catch (err) {
         errorContainer.textContent = err.message;

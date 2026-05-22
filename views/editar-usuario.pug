@@ -4,12 +4,12 @@ block content
   .container(style="display: flex; justify-content: center; align-items: center; min-height: 70vh; padding: 0;")
     .card(style="width: 100%; max-width: 500px; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);")
       div(style="text-align: center; margin-bottom: 2rem;")
-        h2(style="font-size: 1.75rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;") Nuevo Usuario
-        p(style="color: var(--text-muted); font-size: 0.95rem;") Registra un nuevo administrador o cliente en el sistema
+        h2(style="font-size: 1.75rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;") Editar Usuario
+        p(style="color: var(--text-muted); font-size: 0.95rem;") Modificá los datos del administrador o cliente
 
       #error-container(style="display: none; background-color: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem; font-weight: 500;")
 
-      form#crear-usuario-form
+      form#editar-usuario-form
         .form-group(style="margin-bottom: 1.25rem;")
           label(for="nombre" style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem;") Nombre Completo
           input#nombre(
@@ -17,6 +17,7 @@ block content
             name="nombre" 
             placeholder="Juan Pérez" 
             required 
+            value=usuario.nombre
             style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
             onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)';"
             onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none';"
@@ -29,6 +30,7 @@ block content
             name="email" 
             placeholder="juan.perez@techretail.com" 
             required 
+            value=usuario.email
             style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
             onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)';"
             onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none';"
@@ -40,18 +42,18 @@ block content
             type="text" 
             name="ciudad" 
             placeholder="Buenos Aires (Opcional)" 
+            value=usuario.ciudad
             style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
             onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)';"
             onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none';"
           )
 
         .form-group(style="margin-bottom: 1.75rem;")
-          label(for="password" style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem;") Contraseña
+          label(for="password" style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem;") Contraseña (dejá vacío para mantener la actual)
           input#password(
             type="password" 
             name="password" 
-            placeholder="Mínimo 6 caracteres" 
-            required 
+            placeholder="Nueva contraseña (opcional)"
             style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
             onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)';"
             onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none';"
@@ -62,10 +64,10 @@ block content
           button.btn.btn-primary(
             type="submit" 
             style="flex: 2; padding: 0.75rem; border: none; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 0.5rem; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);"
-          ) Crear Usuario
+          ) Guardar Cambios
 
   script.
-    document.getElementById('crear-usuario-form').addEventListener('submit', async function(e) {
+    document.getElementById('editar-usuario-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const errorContainer = document.getElementById('error-container');
@@ -77,22 +79,27 @@ block content
       const ciudad = document.getElementById('ciudad').value;
       const password = document.getElementById('password').value;
       
+      const bodyData = { nombre, email, ciudad };
+      if (password) {
+        bodyData.password = password;
+      }
+      
       try {
-        const response = await fetch('/usuarios', {
-          method: 'POST',
+        const response = await fetch('/usuarios/#{usuario._id}', {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ nombre, email, ciudad, password })
+          body: JSON.stringify(bodyData)
         });
         
         const data = await response.json();
         
         if (!response.ok) {
-          throw new Error(data.error || 'Ocurrió un error al crear el usuario.');
+          throw new Error(data.error || 'Ocurrió un error al actualizar el usuario.');
         }
         
-        showToast('Usuario creado correctamente', 'success');
+        showToast('Usuario actualizado correctamente', 'success');
         setTimeout(function() {
           window.location.href = '/vistas/usuarios';
         }, 1000);
@@ -100,7 +107,6 @@ block content
       } catch (err) {
         errorContainer.textContent = err.message;
         errorContainer.style.display = 'block';
-        // Hacer scroll suave hacia arriba para ver el error
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     });

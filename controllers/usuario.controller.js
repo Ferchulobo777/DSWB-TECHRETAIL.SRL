@@ -51,9 +51,16 @@ exports.obtenerUsuarioPorId = async (req, res, next) => {
 
 exports.actualizarUsuario = async (req, res, next) => {
   try {
+    const datosActualizar = { ...req.body };
+    if (datosActualizar.password) {
+      datosActualizar.password = await bcrypt.hash(datosActualizar.password, 10);
+    } else {
+      delete datosActualizar.password;
+    }
+
     const usuarioActualizado = await Usuario.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      datosActualizar,
       { new: true },
     );
 
@@ -80,6 +87,18 @@ exports.eliminarUsuario = async (req, res, next) => {
     }
 
     res.json({ mensaje: "Usuario eliminado" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.renderEditarUsuario = async (req, res, next) => {
+  try {
+    const usuario = await Usuario.findById(req.params.id);
+    if (!usuario) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+    res.render("editar-usuario", { usuario });
   } catch (error) {
     next(error);
   }
