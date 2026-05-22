@@ -2,8 +2,8 @@ const Pedido = require("../models/Pedido");
 const Producto = require("../models/Producto");
 const Usuario = require("../models/Usuario");
 
-
-exports.crearPedido = async (req, res, next, next) => {
+// Crear pedido
+exports.crearPedido = async (req, res, next) => {
   try {
     const { usuarioId, productos } = req.body;
 
@@ -13,18 +13,25 @@ exports.crearPedido = async (req, res, next, next) => {
     const usuarioExiste = await Usuario.findById(usuarioId);
 
     if (!usuarioExiste) {
-      return res.status(404).json({ error: "Usuario no encontrado" });
+      return res.status(404).json({
+        error: "Usuario no encontrado"
+      });
     }
 
     for (const item of productos) {
+
       const prod = await Producto.findById(item.productoId);
 
       if (!prod) {
-        return res.status(404).json({ error: "Producto no encontrado" });
+        return res.status(404).json({
+          error: "Producto no encontrado"
+        });
       }
 
       if (prod.stock < item.cantidad) {
-        return res.status(400).json({ error: "Stock insuficiente" });
+        return res.status(400).json({
+          error: "Stock insuficiente"
+        });
       }
 
       // descontar stock
@@ -33,62 +40,65 @@ exports.crearPedido = async (req, res, next, next) => {
 
       detalles.push({
         productoId: prod._id,
-        cantidad: item.cantidad,
+        cantidad: item.cantidad
       });
 
       total += prod.precio * item.cantidad;
     }
 
-     
-    
-
-    const nuevoPedido = new Pedido( {
+    const nuevoPedido = new Pedido({
       usuarioId,
       productos: detalles,
       total
     });
 
     await nuevoPedido.save();
+
     res.status(201).json(nuevoPedido);
-    } catch (error) {
-      next(error)
-   }
-  };
 
+  } catch (error) {
+    next(error);
+  }
+};
 
+// Obtener todos los pedidos
+exports.obtenerPedidos = async (req, res, next) => {
 
-exports.obtenerPedidos = async  (req, res, next) => {
   try {
+
     const pedidos = await Pedido.find()
       .populate("usuarioId")
       .populate("productos.productoId");
 
-     res.json(pedidos);
+    res.json(pedidos);
 
-    } catch (error) {
-      next(error)
+  } catch (error) {
+
+    next(error);
+
   }
 };
-  
+
+// Obtener pedido por ID
 exports.obtenerPedidoPorId = async (req, res, next) => {
 
-    try {
+  try {
 
-        const pedido = await Pedido.findById(req.params.id)
-        .populate("usuarioId")
-        .populate("productos.productoId");
+    const pedido = await Pedido.findById(req.params.id)
+      .populate("usuarioId")
+      .populate("productos.productoId");
 
-        if (!pedido) {
-            return res.status(404).json({
-                error: "Pedido no encontrado"
-    });
-  }
-
-        res.json(pedido);
-
-    } catch (error) {
-
-        next(error);
-  
+    if (!pedido) {
+      return res.status(404).json({
+        error: "Pedido no encontrado"
+      });
     }
+
+    res.json(pedido);
+
+  } catch (error) {
+
+    next(error);
+
+  }
 };

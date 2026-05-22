@@ -17,7 +17,7 @@ exports.crearTienda = async (req, res, next) => {
 };
 
 
-exports.obtenerTienda = async (req, res, next) => {
+exports.obtenerTiendas = async (req, res, next) => {
   try {
     const tiendas = await Tienda.find();
     res.json(tiendas);
