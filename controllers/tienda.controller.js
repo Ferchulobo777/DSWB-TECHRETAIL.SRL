@@ -1,4 +1,5 @@
 const Tienda = require("../models/Tienda");
+const Producto = require("../models/Producto");
 
 
 
@@ -44,7 +45,26 @@ exports.obtenerTiendaPorId = async (req, res, next) => {
 exports.renderTiendas = async (req, res, next) => {
   try {
     const tiendas = await Tienda.find();
-    res.render("tiendas", { tiendas });
+    const productos = await Producto.aggregate([
+      { $group: { _id: "$tienda", count: { $sum: 1 } } },
+    ]);
+    const countMap = {};
+    productos.forEach(function(p) {
+      countMap[p._id] = p.count;
+    });
+    res.render("tiendas", { tiendas, countMap });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.renderEditarTienda = async (req, res, next) => {
+  try {
+    const tienda = await Tienda.findById(req.params.id);
+    if (!tienda) {
+      return res.status(404).send("Tienda no encontrada");
+    }
+    res.render("editar-tienda", { tienda });
   } catch (error) {
     next(error);
   }

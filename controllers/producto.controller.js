@@ -4,12 +4,15 @@ const Producto = require("../models/Producto");
 
 
 
-exports.crearProducto =  async (req, res, next) => {
+exports.crearProducto = async (req, res, next) => {
   try {
     const nuevoProducto = new Producto({
+      codigo: req.body.codigo,
       nombre: req.body.nombre,
       precio: req.body.precio,
-      stock: req.body.stock
+      stock: req.body.stock,
+      descripcion: req.body.descripcion,
+      tienda: req.body.tienda || undefined,
     });
 
     await nuevoProducto.save();
@@ -52,12 +55,28 @@ exports.obtenerProductoPorId = async (req, res, next) => {
 
 exports.renderProductos = async (req, res, next) => {
   try {
-    const productos = await Producto.find();
+    const productos = await Producto.find().populate("tienda");
     res.render("productos", { productos });
   } catch (error) {
     next(error);
   }
-}
+};
+
+exports.renderEditarProducto = async (req, res, next) => {
+  try {
+    const producto = await Producto.findById(req.params.id);
+    if (!producto) {
+      return res.status(404).send("Producto no encontrado");
+    }
+
+    const Tienda = require("../models/Tienda");
+    const tiendas = await Tienda.find();
+
+    res.render("editar-producto", { producto, tiendas });
+  } catch (error) {
+    next(error);
+  }
+};
 
 exports.actualizarProducto = async (req, res, next) => {
   try {

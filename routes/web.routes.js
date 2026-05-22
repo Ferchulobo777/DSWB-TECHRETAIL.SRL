@@ -5,6 +5,8 @@ const productoCtrl = require('../controllers/producto.controller');
 const usuarioCtrl = require('../controllers/usuario.controller');
 const tiendaCtrl = require("../controllers/tienda.controller");
 
+const Tienda = require("../models/Tienda");
+
 // Dashboard / Home
 router.get('/', (req, res) => {
     res.render('index');
@@ -17,11 +19,24 @@ router.get('/login', (req, res) => {
 
 // Vistas de Datos
 router.get('/productos', productoCtrl.renderProductos);
+router.get('/productos/nuevo', async (req, res, next) => {
+    try {
+        const tiendas = await Tienda.find();
+        res.render("nuevo-producto", { tiendas });
+    } catch (error) {
+        next(error);
+    }
+});
+router.get('/productos/editar/:id', productoCtrl.renderEditarProducto);
 router.get('/usuarios/nuevo', (req, res) => {
     res.render('nuevo-usuario');
 });
 router.get('/usuarios/editar/:id', usuarioCtrl.renderEditarUsuario);
 router.get('/usuarios', usuarioCtrl.renderUsuarios);
+router.get('/tiendas/nuevo', (req, res) => {
+    res.render('nueva-tienda');
+});
+router.get('/tiendas/editar/:id', tiendaCtrl.renderEditarTienda);
 router.get('/tiendas', tiendaCtrl.renderTiendas);
 
 
