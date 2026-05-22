@@ -10,8 +10,16 @@ router.get('/', (req, res) => {
     res.render('index');
 });
 
+// Login
+router.get('/login', (req, res) => {
+    res.render('login');
+});
+
 // Vistas de Datos
 router.get('/productos', productoCtrl.renderProductos);
+router.get('/usuarios/nuevo', (req, res) => {
+    res.render('nuevo-usuario');
+});
 router.get('/usuarios', usuarioCtrl.renderUsuarios);
 router.get('/tiendas', tiendaCtrl.renderTiendas);
 

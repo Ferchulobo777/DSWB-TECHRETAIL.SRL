@@ -37,6 +37,11 @@ app.use('/vistas', webRoutes);
 app.get('/', (req, res) => {
   res.redirect('/vistas');
 });
+
+// redirigir /login a /vistas/login para facilitar el acceso directo
+app.get('/login', (req, res) => {
+  res.redirect('/vistas/login');
+});
 const errorHandler = require('./middlewares/error.middleware');
 app.use(errorHandler);
 module.exports = app;
