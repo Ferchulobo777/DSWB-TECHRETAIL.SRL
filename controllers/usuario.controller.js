@@ -11,9 +11,12 @@ exports.crearUsuario = async (req, res, next) => {
 
     const nuevoUsuario = new Usuario({
       nombre: req.body.nombre,
+      apellido: req.body.apellido,
       email: req.body.email,
+      documento: req.body.documento,
+      password: passwordEncriptada,
+      rol: req.body.rol || "cliente",
       ciudad: req.body.ciudad,
-      password: passwordEncriptada
     });
 
     await nuevoUsuario.save();

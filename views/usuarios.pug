@@ -10,21 +10,28 @@ block content
       thead
         tr
           th Nombre
+          th Apellido
           th Email
+          th Documento
+          th Rol
           th Ciudad
           th Acciones
       tbody
         each usuario in usuarios
           tr
             td(style="font-weight: 600;")= usuario.nombre
+            td= usuario.apellido
             td= usuario.email
+            td(style="font-family: monospace;")= usuario.documento
+            td
+              span(style=`text-transform: capitalize; font-size: 0.8rem; padding: 0.2rem 0.5rem; border-radius: 6px; font-weight: 600; background: ${usuario.rol === 'admin' ? '#fef08a' : usuario.rol === 'vendedor' ? '#dbeafe' : '#f1f5f9'}`)= usuario.rol
             td= usuario.ciudad || "No especificada"
             td
               a(href=`/vistas/usuarios/editar/${usuario._id}` style="color: var(--primary); text-decoration: none; margin-right: 1rem;") Editar
               button.btn-delete(data-id=`${usuario._id}` style="background: none; border: none; color: #ef4444; cursor: pointer; font-family: inherit; font-size: inherit; padding: 0; text-decoration: none;") Eliminar
         else
           tr
-            td(colspan="4" style="text-align: center; padding: 2rem;") No hay usuarios registrados.
+            td(colspan="7" style="text-align: center; padding: 2rem;") No hay usuarios registrados.
 
   script.
     document.querySelectorAll('.btn-delete').forEach(function(btn) {

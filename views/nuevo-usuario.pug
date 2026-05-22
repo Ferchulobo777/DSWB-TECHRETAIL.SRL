@@ -11,11 +11,23 @@ block content
 
       form#crear-usuario-form
         .form-group(style="margin-bottom: 1.25rem;")
-          label(for="nombre" style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem;") Nombre Completo
+          label(for="nombre" style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem;") Nombre
           input#nombre(
             type="text" 
             name="nombre" 
-            placeholder="Juan Pérez" 
+            placeholder="Juan" 
+            required 
+            style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+            onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)';"
+            onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none';"
+          )
+
+        .form-group(style="margin-bottom: 1.25rem;")
+          label(for="apellido" style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem;") Apellido
+          input#apellido(
+            type="text" 
+            name="apellido" 
+            placeholder="Pérez" 
             required 
             style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
             onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)';"
@@ -33,6 +45,30 @@ block content
             onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)';"
             onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none';"
           )
+
+        .form-group(style="margin-bottom: 1.25rem;")
+          label(for="documento" style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem;") Documento
+          input#documento(
+            type="text" 
+            name="documento" 
+            placeholder="DNI / CUIL" 
+            required 
+            style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none;"
+            onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)';"
+            onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none';"
+          )
+
+        .form-group(style="margin-bottom: 1.25rem;")
+          label(for="rol" style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem;") Rol
+          select#rol(
+            name="rol"
+            style="width: 100%; padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid var(--border); box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: border-color 0.2s, box-shadow 0.2s; outline: none; background: var(--card-bg); cursor: pointer;"
+            onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 3px rgba(37, 99, 235, 0.1)';"
+            onblur="this.style.borderColor='var(--border)'; this.style.boxShadow='none';"
+          )
+            option(value="cliente" selected) Cliente
+            option(value="vendedor") Vendedor
+            option(value="admin") Admin
 
         .form-group(style="margin-bottom: 1.25rem;")
           label(for="ciudad" style="display: block; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem;") Ciudad
@@ -73,7 +109,10 @@ block content
       errorContainer.textContent = '';
       
       const nombre = document.getElementById('nombre').value;
+      const apellido = document.getElementById('apellido').value;
       const email = document.getElementById('email').value;
+      const documento = document.getElementById('documento').value;
+      const rol = document.getElementById('rol').value;
       const ciudad = document.getElementById('ciudad').value;
       const password = document.getElementById('password').value;
       
@@ -83,7 +122,7 @@ block content
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ nombre, email, ciudad, password })
+          body: JSON.stringify({ nombre, apellido, email, documento, rol, ciudad, password })
         });
         
         const data = await response.json();
