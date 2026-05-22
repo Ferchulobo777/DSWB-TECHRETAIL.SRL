@@ -9,7 +9,8 @@
 ### 👥 INTEGRANTES 
 - Vanesa Aracena  
 - Tomas Maldocena
-- Fernando Rodríguez  
+- Fernando Rodríguez
+- Nicolás Martínez 
 
 ---
 
