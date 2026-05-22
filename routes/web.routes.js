@@ -4,6 +4,7 @@ const router = express.Router();
 const productoCtrl = require('../controllers/producto.controller');
 const usuarioCtrl = require('../controllers/usuario.controller');
 const tiendaCtrl = require("../controllers/tienda.controller");
+const pedidoCtrl = require('../controllers/pedido.controller');
 
 const Tienda = require("../models/Tienda");
 
@@ -33,6 +34,9 @@ router.get('/usuarios/nuevo', (req, res) => {
 });
 router.get('/usuarios/editar/:id', usuarioCtrl.renderEditarUsuario);
 router.get('/usuarios', usuarioCtrl.renderUsuarios);
+router.get('/pedidos', pedidoCtrl.renderPedidos);
+router.get('/pedidos/nuevo', pedidoCtrl.renderNuevoPedido);
+router.get('/pedidos/editar/:id', pedidoCtrl.renderEditarPedido);
 router.get('/tiendas/nuevo', (req, res) => {
     res.render('nueva-tienda');
 });

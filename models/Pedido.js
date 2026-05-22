@@ -1,12 +1,18 @@
 const mongoose = require("mongoose");
 
 const pedidoSchema = new mongoose.Schema({
+    numeroOrden: {
+        type: Number,
+    },
     usuarioId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Usuario",
         required: true
     },
-
+    tiendaId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tienda",
+    },
     productos: [
         {
             productoId: {
@@ -20,7 +26,10 @@ const pedidoSchema = new mongoose.Schema({
             }
         }
     ],
-
+    fecha: {
+        type: Date,
+        default: Date.now,
+    },
     total: {
         type: Number,
         required: true
