@@ -57,9 +57,10 @@ exports.renderProductos = async (req, res, next) => {
   try {
     const productos = await Producto.find().populate("tienda");
     res.render("productos", { productos });
-  } catch (error) {
-    next(error);
-  }
+    } catch (error) {
+    console.error("Error en renderProductos con populate:", error);
+    res.status(500).send("Error interno al cargar los productos con sus tiendas.");
+    }
 };
 
 exports.renderEditarProducto = async (req, res, next) => {
